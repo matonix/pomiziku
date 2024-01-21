@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ぽみじく</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/colreorder/1.7.0/js/dataTables.colReorder.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+
+<body>
+
+    <table id="dataTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Level</th>
+                <th>Version</th>
+                <th>Genre</th>
+                <th>Title</th>
+                <th>Min</th>
+                <th>Max</th>
+                <th>Time</th>
+                <th>Notes</th>
+                <th>FloatLv</th>
+                <th>Dif</th>
+                <th>Attribute</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th>Level</th>
+                <th>Version</th>
+                <th>Genre</th>
+                <th>Title</th>
+                <th>Min</th>
+                <th>Max</th>
+                <th>Time</th>
+                <th>Notes</th>
+                <th>FloatLv</th>
+                <th>Dif</th>
+                <th>Attribute</th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        // 指定されたURLからCSVデータを読み込み、DataTableに表示する
+        function loadCsvAndDisplay(url) {
+            Papa.parse(url, {
+                download: true,
+                header: true,
+                dynamicTyping: true,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    console.log("CSV data:", results);
+                    $('#dataTable').DataTable({
+                        data: results.data,
+                        columns: results.meta.fields.map(function (field) {
+                            return { title: field, data: field };
+                        }),
+                        colReorder: true,
+                        footer: true,
+                        initComplete: function () {
+                            let api = this.api();
+
+                            api.columns().every(function () {
+                                let column = this;
+                                let title = column.footer().title;
+                                let th = column.footer();
+
+                                // Create input element
+                                let input = document.createElement('input');
+                                input.placeholder = title;
+                                input.size = 5
+                                th.replaceChildren(input);
+
+                                // Event listener for user input
+                                input.addEventListener('keyup', () => {
+                                    if (column.search() !== this.value) {
+                                        let idx = [...th.parentNode.children].indexOf(th);
+
+                                        api.column(idx + ':visible')
+                                            .search(input.value)
+                                            .draw();
+                                    }
+                                });
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // CSVファイルのURLを指定して関数を呼び出し
+        loadCsvAndDisplay('view.csv');
+
+    </script>
+
+</body>
+
+</html>
