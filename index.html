@@ -22,7 +22,7 @@
     <table id="dataTable" class="display" style="width:100%">
         <thead>
             <tr>
-                <th>Level</th>
+                <th>Lv</th>
                 <!-- <th>Version</th> -->
                 <th>Genre</th>
                 <th>Title</th>
@@ -30,14 +30,15 @@
                 <th>Max</th>
                 <th>Time</th>
                 <th>Notes</th> -->
-                <th>FloatLv</th>
-                <th>Dif</th>
-                <th>Attribute</th>
+                <th>Float</th>
+                <th>Diff</th>
+                <th>Attr</th>
+                <th>Clear</th>
             </tr>
         </thead>
         <tfoot>
             <tr>
-                <th>Level</th>
+                <th>Lv</th>
                 <!-- <th>Version</th> -->
                 <th>Genre</th>
                 <th>Title</th>
@@ -45,9 +46,10 @@
                 <th>Max</th>
                 <th>Time</th>
                 <th>Notes</th> -->
-                <th>FloatLv</th>
-                <th>Dif</th>
-                <th>Attribute</th>
+                <th>Float</th>
+                <th>Diff</th>
+                <th>Attr</th>
+                <th>Clear</th>
             </tr>
         </tfoot>
     </table>
@@ -65,7 +67,7 @@
                     $('#dataTable').DataTable({
                         data: results.data,
                         columns: results.meta.fields.map(function (field) {
-                            return { title: field, data: field };
+                            return { data: field };
                         }),
                         colReorder: true,
                         footer: true,
@@ -74,8 +76,8 @@
 
                             api.columns().every(function () {
                                 let column = this;
-                                let title = column.footer().title;
-                                let th = column.footer();
+                                let title = column.header().title;
+                                let th = column.header();
 
                                 // Create input element
                                 let input = document.createElement('input');
