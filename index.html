@@ -13,13 +13,16 @@
     <script type="text/javascript" src='https://cdn.jsdelivr.net/npm/jsmigemo/dist/jsmigemo.js'></script>
     <style>
         input {
-            height: 3em;
+            height: 4em;
         }
         .dataTables_filter { visibility: hidden;}
 
         label[id="radio"] {
             display: inline-block;
-            width: 100px;
+            width: 6%;
+            text-align: center;
+            padding: 1em;
+            margin: 0.4em;
             border: solid 2px gray;
             background: lightgray;
         }
@@ -33,6 +36,10 @@
             background: lightsalmon;
         }
 
+        select {
+            padding: 1em;
+        }
+
     </style>
     
 </head>
@@ -42,13 +49,13 @@
     <form id="filter-lv" style="margin-bottom:10px">
 
             <input type="radio" name="lv" id="all" value="" checked/><label id="radio" for="all">all</label>
-            <input type="radio" name="lv" id="44" value="44"/><label id="radio" for="44">44</label>
-            <input type="radio" name="lv" id="45" value="45"/><label id="radio" for="45">45</label>
-            <input type="radio" name="lv" id="46" value="46"/><label id="radio" for="46">46</label>
-            <input type="radio" name="lv" id="47" value="47"/><label id="radio" for="47">47</label>
-            <input type="radio" name="lv" id="48" value="48"/><label id="radio" for="48">48</label>
-            <input type="radio" name="lv" id="49" value="49"/><label id="radio" for="49">49</label>
-            <input type="radio" name="lv" id="50" value="50"/><label id="radio" for="50">50</label>
+            <input type="radio" name="lv" id="44" value="44"/><label id="radio" for="44">Lv44</label>
+            <input type="radio" name="lv" id="45" value="45"/><label id="radio" for="45">Lv45</label>
+            <input type="radio" name="lv" id="46" value="46"/><label id="radio" for="46">Lv46</label>
+            <input type="radio" name="lv" id="47" value="47"/><label id="radio" for="47">Lv47</label>
+            <input type="radio" name="lv" id="48" value="48"/><label id="radio" for="48">Lv48</label>
+            <input type="radio" name="lv" id="49" value="49"/><label id="radio" for="49">Lv49</label>
+            <input type="radio" name="lv" id="50" value="50"/><label id="radio" for="50">Lv50</label>
 
     </form>
     <form id="filter-clear" style="margin-bottom:10px">
