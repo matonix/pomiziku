@@ -16,13 +16,48 @@
             height: 3em;
         }
         .dataTables_filter { visibility: hidden;}
+
+        label[id="radio"] {
+            display: inline-block;
+            width: 100px;
+            border: solid 2px gray;
+            background: lightgray;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + label {
+            border: solid 2px darkgoldenrod;
+            background: lightsalmon;
+        }
+
     </style>
     
 </head>
 
 <body>
-    <input id="custom-filter" class="form-control" placeholder="Search (powered by jsmigemo)" type="text" style="width:99%"/>
-    <table id="dataTable" class="display" style="width:100%">
+    <input id="custom-filter" class="form-control" placeholder="Search (powered by jsmigemo)" type="text" style="width:99.5%;margin-bottom:10px;"/>
+    <form id="filter-lv" style="margin-bottom:10px">
+
+            <input type="radio" name="lv" id="all" value="" checked/><label id="radio" for="all">all</label>
+            <input type="radio" name="lv" id="44" value="44"/><label id="radio" for="44">44</label>
+            <input type="radio" name="lv" id="45" value="45"/><label id="radio" for="45">45</label>
+            <input type="radio" name="lv" id="46" value="46"/><label id="radio" for="46">46</label>
+            <input type="radio" name="lv" id="47" value="47"/><label id="radio" for="47">47</label>
+            <input type="radio" name="lv" id="48" value="48"/><label id="radio" for="48">48</label>
+            <input type="radio" name="lv" id="49" value="49"/><label id="radio" for="49">49</label>
+            <input type="radio" name="lv" id="50" value="50"/><label id="radio" for="50">50</label>
+
+    </form>
+    <form id="filter-clear" style="margin-bottom:10px">
+            <input type="radio" name="clear" id="np" value="" checked/><label id="radio" for="np">No play</label> 
+            <input type="radio" name="clear" id="y" value="y"/><label id="radio" for="y">Clear</label>
+            <input type="radio" name="clear" id="n" value="n"/><label id="radio" for="n">Failed</label>
+
+    </form>
+    <table id="dataTable" class="display" style="width:100%,">
         <thead>
             <tr>
                 <th>Lv</th>
@@ -97,11 +132,32 @@
                                 api.search(reg, true).draw();
                             } );
 
-                            api.columns().every(function () {
+                            api.columns().every( function() {
                                 let column = this;
-                                let title = column.header().title;
-                                let th = column.header();
-
+                                let title = column.footer().title;
+                                let th = column.footer();
+                                // レベル別フィルタ
+                                if (th.innerText == "Lv") {
+                                    $('#filter-lv input[type=radio]').change( function() {
+                                        if (column.search() !== this.value) {
+                                        let idx = [...th.parentNode.children].indexOf(th);
+                                        api.column(idx + ':visible')
+                                            .search(this.value)
+                                            .draw();
+                                        }
+                                    });
+                                }
+                                // クリア状況フィルタ
+                                if (th.innerText == "Clear") {
+                                    $('#filter-clear input[type=radio]').change( function() {
+                                        if (column.search() !== this.value) {
+                                        let idx = [...th.parentNode.children].indexOf(th);
+                                        api.column(idx + ':visible')
+                                            .search(this.value)
+                                            .draw();
+                                        }
+                                    });
+                                }
                                 // Create input element
                                 let input = document.createElement('input');
                                 input.placeholder = title;
