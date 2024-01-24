@@ -8,17 +8,20 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/colreorder/1.7.0/js/dataTables.colReorder.min.js"></script>
-    <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-        <style>
-            input {
-                height: 3em;
-            }
-        </style>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jsmigemo/dist/jsmigemo.min.mjs"></script> うごかん-->
+    <script type="text/javascript" src='https://cdn.jsdelivr.net/npm/jsmigemo/dist/jsmigemo.js'></script>
+    <style>
+        input {
+            height: 3em;
+        }
+        .dataTables_filter { visibility: hidden;}
+    </style>
+    
 </head>
 
 <body>
-
+    <input id="custom-filter" class="form-control" placeholder="Search (powered by jsmigemo)" type="text" style="width:99%"/>
     <table id="dataTable" class="display" style="width:100%">
         <thead>
             <tr>
@@ -64,6 +67,18 @@
                 skipEmptyLines: true,
                 complete: function (results) {
                     console.log("CSV data:", results);
+                    // jsmigemoの設定
+                    var cd = null;
+                    function loadDictionary() {
+                        let req = new XMLHttpRequest();
+                        req.open("get", "https://cdn.jsdelivr.net/npm/jsmigemo/migemo-compact-dict", true);
+                        req.responseType = "arraybuffer";
+                        req.onload = function () {
+                            let ab = req.response;
+                            cd = new jsmigemo.CompactDictionary(ab);
+                        }
+                        req.send(null);
+                    }
                     $('#dataTable').DataTable({
                         data: results.data,
                         columns: results.meta.fields.map(function (field) {
@@ -73,6 +88,14 @@
                         footer: true,
                         initComplete: function () {
                             let api = this.api();
+                            
+                            // カスタム検索窓。元の検索窓は消さずにCSSで非表示にする（ヘッダ参照）
+                            $('#custom-filter').keyup( function() {
+                                var migemo = new jsmigemo.Migemo()
+                                migemo.setDict(cd);
+                                var reg = migemo.query(this.value);
+                                api.search(reg, true).draw();
+                            } );
 
                             api.columns().every(function () {
                                 let column = this;
@@ -89,13 +112,17 @@
                                 input.addEventListener('keyup', () => {
                                     if (column.search() !== this.value) {
                                         let idx = [...th.parentNode.children].indexOf(th);
-
+                                        var migemo = new jsmigemo.Migemo()
+                            			migemo.setDict(cd);
+                                        var reg = migemo.query(input.value);
+                                        // var regex = new RegExp(reg, 'g');
                                         api.column(idx + ':visible')
-                                            .search(input.value)
+                                            .search(reg, true)
                                             .draw();
                                     }
                                 });
                             });
+                            loadDictionary();
                         }
                     });
                 }
@@ -104,9 +131,8 @@
 
         // CSVファイルのURLを指定して関数を呼び出し
         loadCsvAndDisplay('view.csv');
-
+        
     </script>
-
 </body>
 
 </html>
